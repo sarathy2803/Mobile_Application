@@ -294,7 +294,7 @@ class _DashboardPageState extends State<DashboardPage> {
     Center(child: HomePage()),
     Center(child: Text('Chat Page', style: TextStyle(fontSize: 24))),
     Center(child: Text('Sell Page', style: TextStyle(fontSize: 24))),
-    const MyAdsPage(),
+    MyAdsPage(),
     AccountPage(),
   ];
 
