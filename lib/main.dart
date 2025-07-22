@@ -352,12 +352,20 @@ class _DashboardPageState extends State<DashboardPage> {
                     const SizedBox(height: 20),
                     _buildSellOption(
                       context,
-                      'Bricks',
+                      'Savudu Soil',
                       Icons.dashboard_customize,
                     ),
-                    _buildSellOption(context, 'Stones', Icons.terrain),
-                    _buildSellOption(context, 'Cements', Icons.inventory_2),
-                    _buildSellOption(context, 'Steel', Icons.construction),
+                    _buildSellOption(
+                      context,
+                      'Rough Peice Soil',
+                      Icons.terrain,
+                    ),
+                    _buildSellOption(context, 'Earth Soil', Icons.inventory_2),
+                    _buildSellOption(
+                      context,
+                      'Crusher Dust',
+                      Icons.construction,
+                    ),
                   ],
                 ),
               ),
@@ -435,22 +443,22 @@ class _DashboardPageState extends State<DashboardPage> {
         title: Column(
           children: [
             const Text(
-              'KG',
+              'KALSUN INFRA',
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 12,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),
             const SizedBox(height: 4),
-            Text(
-              'Knowledge Guaranteed',
-              style: TextStyle(
-                fontSize: 12,
-                // ignore: deprecated_member_use
-                color: Colors.white.withOpacity(0.8),
-              ),
-            ),
+            // Text(
+            //   'Knowledge Guaranteed',
+            //   style: TextStyle(
+            //     fontSize: 12,
+            //     // ignore: deprecated_member_use
+            //     color: Colors.white.withOpacity(0.8),
+            //   ),
+            // ),
           ],
         ),
         backgroundColor: const Color(0xFF1273EB),
@@ -709,10 +717,7 @@ class _AccountPageState extends State<AccountPage> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: const Text(
-                'Apply Changes',
-                style: TextStyle(fontSize: 16),
-              ),
+              child: const Text('Save Changes', style: TextStyle(fontSize: 12)),
             ),
           ),
         ),
@@ -746,21 +751,40 @@ class MyAdsPage extends StatefulWidget {
   State<MyAdsPage> createState() => _MyAdsPageState();
 }
 
-class _MyAdsPageState extends State<MyAdsPage> {
+class _MyAdsPageState extends State<MyAdsPage> with SingleTickerProviderStateMixin {
   final ImagePicker _picker = ImagePicker();
+  File? _adImage;
+  late AnimationController _fadeController;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 700),
+      vsync: this,
+    );
+    _fadeAnimation = CurvedAnimation(parent: _fadeController, curve: Curves.easeIn);
+  }
 
   Future<void> _postAd() async {
-    // Open the image gallery
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
-      // If an image is selected, you can proceed to a form to create the ad.
-      // For now, we'll just show a snackbar as confirmation.
-      if (!mounted) return;
+      setState(() {
+        _adImage = File(image.path);
+        _fadeController.forward(from: 0); // Start fade-in animation
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Image selected! Path: ${image.path}')),
       );
     }
+  }
+
+  @override
+  void dispose() {
+    _fadeController.dispose();
+    super.dispose();
   }
 
   @override
@@ -769,11 +793,24 @@ class _MyAdsPageState extends State<MyAdsPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.dynamic_feed_outlined,
-            size: 100,
-            color: Colors.grey.shade300,
-          ),
+          _adImage != null
+              ? FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.file(
+                      _adImage!,
+                      width: 150,
+                      height: 150,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                )
+              : Icon(
+                  Icons.dynamic_feed_outlined,
+                  size: 100,
+                  color: Colors.grey.shade300,
+                ),
           const SizedBox(height: 20),
           const Text(
             'You have no ads',
@@ -793,10 +830,18 @@ class _MyAdsPageState extends State<MyAdsPage> {
             ),
           ),
           const SizedBox(height: 30),
-          ElevatedButton.icon(
-            onPressed: _postAd,
-            icon: const Icon(Icons.add_circle_outline),
-            label: const Text('Post Ad'),
+          // 2. Animated button press effect
+          AnimatedScale(
+            scale: 1.0,
+            duration: const Duration(milliseconds: 200),
+            child: ElevatedButton.icon(
+              onPressed: _postAd,
+              icon: const Icon(Icons.add_circle_outline),
+              label: const Text('Post Ad'),
+              style: ElevatedButton.styleFrom(
+                animationDuration: const Duration(milliseconds: 200),
+              ),
+            ),
           ),
         ],
       ),
@@ -822,34 +867,40 @@ class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   final List<Map<String, String>> _featuredItems = const [
-    {'title': 'Land Survey with Topo Sketch', 'imagePath': 'assets/images/bricks.png'},
+    {
+      'title': 'Land Survey with Topo Sketch',
+      'imagePath': 'assets/images/bricks.png',
+    },
     {'title': 'Soil Testing', 'imagePath': 'assets/images/stones.png'},
     {'title': 'Site Cleaning', 'imagePath': 'assets/images/soil.png'},
     {'title': 'Architect Drawing', 'imagePath': 'assets/images/steel.png'},
-    {'title': 'Soil Filling & Levelling', 'imagePath': 'assets/images/stones.png'},
+    {
+      'title': 'Soil Filling & Levelling',
+      'imagePath': 'assets/images/stones.png',
+    },
   ];
 
   final List<RecentListingItem> _recentListings = const [
     RecentListingItem(
-      title: 'Bricks',
-      category: 'Civil',
+      title: 'SAVUDU SOIL',
+      category: 'Savudu soil is used for stable and firm base preparation',
       price: '₹10',
       imagePath: 'assets/images/bricks.png',
     ),
     RecentListingItem(
-      title: 'Cement',
+      title: 'ROUGH PIECE SOIL',
       category: 'Civil',
       price: '₹1200',
       imagePath: 'assets/images/cement.png',
     ),
     RecentListingItem(
-      title: 'Stones',
+      title: 'EARTH SOIL',
       category: 'Civil',
       price: '₹150',
       imagePath: 'assets/images/stones.png',
     ),
     RecentListingItem(
-      title: 'Steel',
+      title: 'CRUSHER DUST',
       category: 'Civil',
       price: '₹50',
       imagePath: 'assets/images/steel.png',
@@ -865,7 +916,7 @@ class HomePage extends StatelessWidget {
           'OUR SERVICES',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 16, width:54),
+        const SizedBox(height: 16, width: 54),
         CarouselSlider(
           options: CarouselOptions(
             height: 180.0,
@@ -877,8 +928,7 @@ class HomePage extends StatelessWidget {
             viewportFraction: 0.8,
           ),
           items: _featuredItems.map((item) {
-            return _buildFeaturedItem(
-                item['title']!, item['imagePath']!);
+            return _buildFeaturedItem(item['title']!, item['imagePath']!);
           }).toList(),
         ),
         const SizedBox(height: 24),
@@ -887,7 +937,25 @@ class HomePage extends StatelessWidget {
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
-        ..._recentListings.map((item) => _buildListItem(item)),
+        // Animated list appearance
+        ..._recentListings.asMap().entries.map((entry) {
+          int idx = entry.key;
+          RecentListingItem item = entry.value;
+          return TweenAnimationBuilder<double>(
+            tween: Tween<double>(begin: 0, end: 1),
+            duration: Duration(milliseconds: 400 + idx * 100),
+            builder: (context, value, child) {
+              return Opacity(
+                opacity: value,
+                child: Transform.translate(
+                  offset: Offset(0, (1 - value) * 30),
+                  child: child,
+                ),
+              );
+            },
+            child: _buildListItem(item),
+          );
+        }),
       ],
     );
   }
@@ -905,8 +973,8 @@ class HomePage extends StatelessWidget {
               width: 1000.0,
               errorBuilder: (context, error, stackTrace) {
                 return const Center(
-                    child: Icon(Icons.broken_image,
-                        size: 50, color: Colors.grey));
+                  child: Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                );
               },
             ),
             Positioned(
@@ -918,20 +986,23 @@ class HomePage extends StatelessWidget {
                   gradient: LinearGradient(
                     colors: [
                       Color.fromARGB(200, 0, 0, 0),
-                      Color.fromARGB(0, 0, 0, 0)
+                      Color.fromARGB(0, 0, 0, 0),
                     ],
                     begin: Alignment.bottomCenter,
                     end: Alignment.topCenter,
                   ),
                 ),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10.0,
+                  horizontal: 20.0,
+                ),
                 child: Text(
                   title,
                   style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold),
+                    color: Colors.white,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -979,13 +1050,34 @@ class RegistrationDialog extends StatefulWidget {
   State<RegistrationDialog> createState() => _RegistrationDialogState();
 }
 
-class _RegistrationDialogState extends State<RegistrationDialog> {
+class _RegistrationDialogState extends State<RegistrationDialog>
+    with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool _obscurePassword = true;
+
+  late AnimationController _dialogController;
+  late Animation<double> _dialogScale;
+
+  @override
+  void initState() {
+    super.initState();
+    _dialogController = AnimationController(
+      duration: const Duration(milliseconds: 400),
+      vsync: this,
+    );
+    _dialogScale = CurvedAnimation(parent: _dialogController, curve: Curves.elasticOut);
+    _dialogController.forward();
+  }
+
+  @override
+  void dispose() {
+    _dialogController.dispose();
+    super.dispose();
+  }
 
   void _register() {
     if (_formKey.currentState!.validate()) {
@@ -998,145 +1090,148 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Register',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1273EB),
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: fullNameController,
-                decoration: InputDecoration(
-                  labelText: 'Full Name',
-                  prefixIcon: const Icon(Icons.person),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
+    return ScaleTransition(
+      scale: _dialogScale,
+      child: Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Register',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1273EB),
                   ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your full name';
-                  }
-                  if (value.length < 3) {
-                    return 'Name must be at least 3 characters';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 15),
-              TextFormField(
-                controller: emailController,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  prefixIcon: const Icon(Icons.email),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  if (!RegExp(
-                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                  ).hasMatch(value)) {
-                    return 'Please enter a valid email';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 15),
-              TextFormField(
-                controller: phoneController,
-                decoration: InputDecoration(
-                  labelText: 'Phone Number',
-                  prefixIcon: const Icon(Icons.phone),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                keyboardType: TextInputType.phone,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your phone number';
-                  }
-                  if (!RegExp(r'^[0-9]{10,15}$').hasMatch(value)) {
-                    return 'Please enter a valid phone number';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 15),
-              TextFormField(
-                controller: passwordController,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  prefixIcon: const Icon(Icons.lock),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscurePassword
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                      color: const Color(0xFF1273EB),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _obscurePassword = !_obscurePassword;
-                      });
-                    },
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                obscureText: _obscurePassword,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a password';
-                  }
-                  if (value.length < 6) {
-                    return 'Password must be at least 6 characters';
-                  }
-                  if (!RegExp(
-                    r'^(?=.*[A-Za-z])(?=.*\d).{6,}$',
-                  ).hasMatch(value)) {
-                    return 'Password must contain letters and numbers';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                height: 45,
-                child: ElevatedButton(
-                  onPressed: _register,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1273EB),
-                    shape: RoundedRectangleBorder(
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: fullNameController,
+                  decoration: InputDecoration(
+                    labelText: 'Full Name',
+                    prefixIcon: const Icon(Icons.person),
+                    border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: const Text(
-                    'Submit',
-                    style: TextStyle(color: Colors.white),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your full name';
+                    }
+                    if (value.length < 3) {
+                      return 'Name must be at least 3 characters';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 15),
+                TextFormField(
+                  controller: emailController,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    prefixIcon: const Icon(Icons.email),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your email';
+                    }
+                    if (!RegExp(
+                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                    ).hasMatch(value)) {
+                      return 'Please enter a valid email';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 15),
+                TextFormField(
+                  controller: phoneController,
+                  decoration: InputDecoration(
+                    labelText: 'Phone Number',
+                    prefixIcon: const Icon(Icons.phone),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  keyboardType: TextInputType.phone,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your phone number';
+                    }
+                    if (!RegExp(r'^[0-9]{10,15}$').hasMatch(value)) {
+                      return 'Please enter a valid phone number';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 15),
+                TextFormField(
+                  controller: passwordController,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    prefixIcon: const Icon(Icons.lock),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: const Color(0xFF1273EB),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  obscureText: _obscurePassword,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a password';
+                    }
+                    if (value.length < 6) {
+                      return 'Password must be at least 6 characters';
+                    }
+                    if (!RegExp(
+                      r'^(?=.*[A-Za-z])(?=.*\d).{6,}$',
+                    ).hasMatch(value)) {
+                      return 'Password must contain letters and numbers';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  height: 45,
+                  child: ElevatedButton(
+                    onPressed: _register,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1273EB),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text(
+                      'Submit',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
