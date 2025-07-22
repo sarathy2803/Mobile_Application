@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:image_picker/image_picker.dart';
 
 void main() {
@@ -75,9 +76,9 @@ class _SplashScreenState extends State<SplashScreen>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'KG',
+                'KALSUN INFRA',
                 style: TextStyle(
-                  fontSize: 80,
+                  fontSize: 30,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF1273EB),
                 ),
@@ -150,17 +151,9 @@ class _LoginPageState extends State<LoginPage> {
               const Column(
                 children: [
                   Text(
-                    'KG',
+                    'KALSUN INFRA',
                     style: TextStyle(
-                      fontSize: 60,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1273EB),
-                    ),
-                  ),
-                  Text(
-                    'Knowledge Guaranteed',
-                    style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 25,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF1273EB),
                     ),
@@ -418,8 +411,10 @@ class _DashboardPageState extends State<DashboardPage> {
         return PopupMenuItem<String>(
           value: message,
           child: ListTile(
-            leading: Icon(Icons.notifications_active_outlined,
-                color: Theme.of(context).primaryColor),
+            leading: Icon(
+              Icons.notifications_active_outlined,
+              color: Theme.of(context).primaryColor,
+            ),
             title: Text(message, style: const TextStyle(fontSize: 14)),
           ),
         );
@@ -427,9 +422,9 @@ class _DashboardPageState extends State<DashboardPage> {
     ).then((selectedValue) {
       if (selectedValue == null) return;
       // Handle tap on a notification item if needed
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Tapped on: $selectedValue')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Tapped on: $selectedValue')));
     });
   }
 
@@ -532,10 +527,22 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
           BottomNavigationBarItem(
             icon: Container(
+              // Outer container for the gradient border
+              padding: const EdgeInsets.all(
+                2,
+              ), // This padding creates the border width
               decoration: BoxDecoration(
-                color: const Color(0xFF1273EB),
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.orange, width: 2),
+                gradient: const SweepGradient(
+                  colors: [
+                    Colors.orange,
+                    Colors.yellow,
+                    Colors.white,
+                    Colors
+                        .orange, // Loop back to orange for a smooth transition
+                  ],
+                  stops: [0.0, 0.35, 0.7, 1.0],
+                ),
                 boxShadow: [
                   BoxShadow(
                     // ignore: deprecated_member_use
@@ -545,9 +552,16 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                 ],
               ),
-              child: const Padding(
-                padding: EdgeInsets.all(12.0),
-                child: Icon(Icons.add, color: Colors.white, size: 30),
+              child: Container(
+                // Inner container for the icon
+                decoration: const BoxDecoration(
+                  color: Color(0xFF1273EB),
+                  shape: BoxShape.circle,
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.all(12.0),
+                  child: Icon(Icons.add, color: Colors.white, size: 30),
+                ),
               ),
             ),
             label: 'Sell',
@@ -744,9 +758,7 @@ class _MyAdsPageState extends State<MyAdsPage> {
       // For now, we'll just show a snackbar as confirmation.
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Image selected! Path: ${image.path}'),
-        ),
+        SnackBar(content: Text('Image selected! Path: ${image.path}')),
       );
     }
   }
@@ -757,11 +769,19 @@ class _MyAdsPageState extends State<MyAdsPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.dynamic_feed_outlined, size: 100, color: Colors.grey.shade300),
+          Icon(
+            Icons.dynamic_feed_outlined,
+            size: 100,
+            color: Colors.grey.shade300,
+          ),
           const SizedBox(height: 20),
           const Text(
             'You have no ads',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.grey),
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey,
+            ),
           ),
           const SizedBox(height: 8),
           Padding(
@@ -801,11 +821,39 @@ class RecentListingItem {
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
+  final List<Map<String, String>> _featuredItems = const [
+    {'title': 'Land Survey with Topo Sketch', 'imagePath': 'assets/images/bricks.png'},
+    {'title': 'Soil Testing', 'imagePath': 'assets/images/stones.png'},
+    {'title': 'Site Cleaning', 'imagePath': 'assets/images/soil.png'},
+    {'title': 'Architect Drawing', 'imagePath': 'assets/images/steel.png'},
+    {'title': 'Soil Filling & Levelling', 'imagePath': 'assets/images/stones.png'},
+  ];
+
   final List<RecentListingItem> _recentListings = const [
-    RecentListingItem(title: 'Bricks', category: 'Civil', price: '₹10', imagePath: 'assets/images/bricks.png'),
-    RecentListingItem(title: 'Cement', category: 'Civil', price: '₹1200', imagePath: 'assets/images/cement.png'),
-    RecentListingItem(title: 'Stones', category: 'Civil', price: '₹150', imagePath: 'assets/images/stones.png'),
-    RecentListingItem(title: 'Steel', category: 'Civil', price: '₹50', imagePath: 'assets/images/steel.png'),
+    RecentListingItem(
+      title: 'Bricks',
+      category: 'Civil',
+      price: '₹10',
+      imagePath: 'assets/images/bricks.png',
+    ),
+    RecentListingItem(
+      title: 'Cement',
+      category: 'Civil',
+      price: '₹1200',
+      imagePath: 'assets/images/cement.png',
+    ),
+    RecentListingItem(
+      title: 'Stones',
+      category: 'Civil',
+      price: '₹150',
+      imagePath: 'assets/images/stones.png',
+    ),
+    RecentListingItem(
+      title: 'Steel',
+      category: 'Civil',
+      price: '₹50',
+      imagePath: 'assets/images/steel.png',
+    ),
   ];
 
   @override
@@ -814,24 +862,24 @@ class HomePage extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       children: [
         const Text(
-          'Featured Items',
+          'OUR SERVICES',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 16),
-        SizedBox(
-          height: 200,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              _buildFeaturedItem('Bricks', Icons.airplane_ticket),
-              const SizedBox(width: 16),
-              _buildFeaturedItem('Stones', Icons.laptop),
-              const SizedBox(width: 16),
-              _buildFeaturedItem('Cements', Icons.headset),
-              const SizedBox(width: 16),
-              _buildFeaturedItem('Steel', Icons.tv),
-            ],
+        const SizedBox(height: 16, width:54),
+        CarouselSlider(
+          options: CarouselOptions(
+            height: 180.0,
+            autoPlay: true,
+            autoPlayInterval: const Duration(seconds: 3),
+            autoPlayAnimationDuration: const Duration(milliseconds: 800),
+            autoPlayCurve: Curves.fastOutSlowIn,
+            enlargeCenterPage: true,
+            viewportFraction: 0.8,
           ),
+          items: _featuredItems.map((item) {
+            return _buildFeaturedItem(
+                item['title']!, item['imagePath']!);
+          }).toList(),
         ),
         const SizedBox(height: 24),
         const Text(
@@ -844,28 +892,51 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildFeaturedItem(String title, IconData icon) {
+  Widget _buildFeaturedItem(String title, String imagePath) {
     return Container(
-      width: 150,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            // ignore: deprecated_member_use
-            color: Colors.grey.withOpacity(0.2),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 50, color: const Color(0xFF1273EB)),
-          const SizedBox(height: 10),
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        ],
+      margin: const EdgeInsets.symmetric(horizontal: 5.0),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+        child: Stack(
+          children: <Widget>[
+            Image.asset(
+              imagePath,
+              fit: BoxFit.cover,
+              width: 1000.0,
+              errorBuilder: (context, error, stackTrace) {
+                return const Center(
+                    child: Icon(Icons.broken_image,
+                        size: 50, color: Colors.grey));
+              },
+            ),
+            Positioned(
+              bottom: 0.0,
+              left: 0.0,
+              right: 0.0,
+              child: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color.fromARGB(200, 0, 0, 0),
+                      Color.fromARGB(0, 0, 0, 0)
+                    ],
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                  ),
+                ),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -883,7 +954,10 @@ class HomePage extends StatelessWidget {
             return const Icon(Icons.broken_image, size: 50, color: Colors.grey);
           },
         ),
-        title: Text(item.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(
+          item.title,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         subtitle: Text(item.category),
         trailing: Text(
           item.price,

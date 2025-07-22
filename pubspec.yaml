@@ -9,10 +9,10 @@ environment:
 
 dependencies:
   image_picker: ^1.0.4  # Latest version
-  carousel_slider: ^4.2.1
+  carousel_slider: ^5.1.1 # Or the latest version
   flutter:
     sdk: flutter
-    
+
   cupertino_icons: ^1.0.8
 
 dev_dependencies:
@@ -24,3 +24,9 @@ dev_dependencies:
 flutter:
 
   uses-material-design: true
+  assets:
+    - assets/images/bricks.png
+    - assets/images/cement.png
+    - assets/images/soil.png
+    - assets/images/steel.png
+    - assets/images/stones.png
