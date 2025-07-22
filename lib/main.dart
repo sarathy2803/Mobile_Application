@@ -289,6 +289,7 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   int _selectedIndex = 0;
+  final GlobalKey _notificationIconKey = GlobalKey();
 
   static const List<Widget> _pages = <Widget>[
     Center(child: HomePage()),
@@ -387,6 +388,51 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
+  void _showNotifications() {
+    // Get the render box of the icon to calculate its position
+    final RenderBox renderBox =
+        _notificationIconKey.currentContext!.findRenderObject() as RenderBox;
+    final Size size = renderBox.size;
+    final Offset offset = renderBox.localToGlobal(Offset.zero);
+
+    // Dummy notification messages
+    final List<String> dummyNotifications = [
+      'Your order #12345 has been shipped.',
+      'You have a new message from support.',
+      'Flash Sale! 50% off on all cements.',
+      'Welcome to KG! Complete your profile.',
+    ];
+
+    showMenu<String>(
+      context: context,
+      // Position the menu relative to the notification icon
+      position: RelativeRect.fromLTRB(
+        offset.dx,
+        offset.dy + size.height,
+        offset.dx + size.width,
+        offset.dy + size.height,
+      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 8,
+      items: dummyNotifications.map((String message) {
+        return PopupMenuItem<String>(
+          value: message,
+          child: ListTile(
+            leading: Icon(Icons.notifications_active_outlined,
+                color: Theme.of(context).primaryColor),
+            title: Text(message, style: const TextStyle(fontSize: 14)),
+          ),
+        );
+      }).toList(),
+    ).then((selectedValue) {
+      if (selectedValue == null) return;
+      // Handle tap on a notification item if needed
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Tapped on: $selectedValue')),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -415,12 +461,9 @@ class _DashboardPageState extends State<DashboardPage> {
         backgroundColor: const Color(0xFF1273EB),
         actions: [
           IconButton(
+            key: _notificationIconKey,
             icon: const Icon(Icons.notifications, color: Colors.orange),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Notifications clicked')),
-              );
-            },
+            onPressed: _showNotifications,
           ),
         ],
         bottom: PreferredSize(
@@ -552,6 +595,16 @@ class _AccountPageState extends State<AccountPage> {
     }
   }
 
+  void _applyChanges() {
+    // In a real app, you would upload the image and save user data here.
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Changes have been applied!'),
+        backgroundColor: Colors.green,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -626,6 +679,28 @@ class _AccountPageState extends State<AccountPage> {
           icon: Icons.workspace_premium_outlined,
           title: 'Elite Packages for Buyers',
           onTap: () {},
+        ),
+        const SizedBox(height: 40),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton(
+              onPressed: _applyChanges,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).primaryColor,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text(
+                'Apply Changes',
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+          ),
         ),
       ],
     );
