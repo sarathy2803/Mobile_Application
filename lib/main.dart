@@ -617,15 +617,6 @@ class _AccountPageState extends State<AccountPage> {
     }
   }
 
-  void _applyChanges() {
-    // In a real app, you would upload the image and save user data here.
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Changes have been applied!'),
-        backgroundColor: Colors.green,
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -702,24 +693,36 @@ class _AccountPageState extends State<AccountPage> {
           title: 'Elite Packages for Buyers',
           onTap: () {},
         ),
-        const SizedBox(height: 40),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: _applyChanges,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).primaryColor,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: const Text('Save Changes', style: TextStyle(fontSize: 12)),
-            ),
-          ),
+        // const SizedBox(height: 40),
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        //   child: SizedBox(
+        //     width: double.infinity,
+        //     height: 50,
+        //     child: ElevatedButton(
+        //       onPressed: _applyChanges,
+        //       style: ElevatedButton.styleFrom(
+        //         backgroundColor: Theme.of(context).primaryColor,
+        //         foregroundColor: Colors.white,
+        //         shape: RoundedRectangleBorder(
+        //           borderRadius: BorderRadius.circular(10),
+        //         ),
+        //       ),
+        //       child: const Text('Save Changes', style: TextStyle(fontSize: 12)),
+        //     ),
+        //   ),
+        // ),
+        _buildMenuOption(
+          context,
+          icon: Icons.lock_outline,
+          title: 'Change Password',
+          onTap: () {
+            // Navigate to change password screen or show a dialog
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ChangePasswordPage()),
+            );
+          },
         ),
       ],
     );
@@ -744,6 +747,46 @@ class _AccountPageState extends State<AccountPage> {
   }
 }
 
+class ChangePasswordPage extends StatelessWidget {
+  const ChangePasswordPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Change Password')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextFormField(
+              decoration: InputDecoration(labelText: 'Current Password'),
+              obscureText: true,
+            ),
+            SizedBox(height: 20),
+            TextFormField(
+              decoration: InputDecoration(labelText: 'New Password'),
+              obscureText: true,
+            ),
+            SizedBox(height: 20),
+            TextFormField(
+              decoration: InputDecoration(labelText: 'Confirm New Password'),
+              obscureText: true,
+            ),
+            SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () {
+                // Implement password change logic here
+                Navigator.pop(context);
+              },
+              child: Text('Change Password'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class MyAdsPage extends StatefulWidget {
   const MyAdsPage({super.key});
 
@@ -751,7 +794,8 @@ class MyAdsPage extends StatefulWidget {
   State<MyAdsPage> createState() => _MyAdsPageState();
 }
 
-class _MyAdsPageState extends State<MyAdsPage> with SingleTickerProviderStateMixin {
+class _MyAdsPageState extends State<MyAdsPage>
+    with SingleTickerProviderStateMixin {
   final ImagePicker _picker = ImagePicker();
   File? _adImage;
   late AnimationController _fadeController;
@@ -764,7 +808,10 @@ class _MyAdsPageState extends State<MyAdsPage> with SingleTickerProviderStateMix
       duration: const Duration(milliseconds: 700),
       vsync: this,
     );
-    _fadeAnimation = CurvedAnimation(parent: _fadeController, curve: Curves.easeIn);
+    _fadeAnimation = CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeIn,
+    );
   }
 
   Future<void> _postAd() async {
@@ -1069,7 +1116,10 @@ class _RegistrationDialogState extends State<RegistrationDialog>
       duration: const Duration(milliseconds: 400),
       vsync: this,
     );
-    _dialogScale = CurvedAnimation(parent: _dialogController, curve: Curves.elasticOut);
+    _dialogScale = CurvedAnimation(
+      parent: _dialogController,
+      curve: Curves.elasticOut,
+    );
     _dialogController.forward();
   }
 

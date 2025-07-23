@@ -12,6 +12,9 @@ dependencies:
   carousel_slider: ^5.1.1 # Or the latest version
   flutter:
     sdk: flutter
+  google_sign_in: ^6.1.6
+  firebase_core: ^2.24.2
+  firebase_auth: ^4.15.2
 
   cupertino_icons: ^1.0.8
 
