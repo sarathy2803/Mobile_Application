@@ -2,9 +2,20 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
+}
+
+class Firebase {
+  static Future<void> initializeApp() async {
+    // Simulate Firebase initialization
+    await Future.delayed(const Duration(seconds: 1));
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -131,6 +142,38 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       builder: (context) => const RegistrationDialog(),
     );
+  }
+
+  Future<void> _signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    if (googleUser == null) return; // User cancelled
+
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithCredential(credential);
+      User? user = userCredential.user;
+      if (user != null) {
+        print('User UID: ${user.uid}');
+        print('User Name: ${user.displayName}');
+        print('User Email: ${user.email}');
+        print('User Photo: ${user.photoURL}');
+        // You can pass user info to DashboardPage or store it as needed
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const DashboardPage()),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Google sign-in failed: $e')));
+    }
   }
 
   @override
@@ -265,6 +308,25 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
+              const SizedBox(height: 10),
+              // Google Sign-In Button
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: OutlinedButton.icon(
+                  icon: Image.asset('assets/images/google.png', height: 24),
+                  label: const Text('Sign In'),
+                  onPressed: _signInWithGoogle,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    side: const BorderSide(color: Color(0xFF1273EB)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -286,7 +348,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   static const List<Widget> _pages = <Widget>[
     Center(child: HomePage()),
-    Center(child: Text('Chat Page', style: TextStyle(fontSize: 24))),
+    Center(child: AboutUsPage()), // <-- Replace Chat Page with AboutUsPage
     Center(child: Text('Sell Page', style: TextStyle(fontSize: 24))),
     MyAdsPage(),
     AccountPage(),
@@ -530,7 +592,7 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.chat),
-            label: 'Chat',
+            label: 'About Us',
             backgroundColor: const Color.fromARGB(255, 58, 18, 235),
           ),
           BottomNavigationBarItem(
@@ -616,7 +678,6 @@ class _AccountPageState extends State<AccountPage> {
       });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -721,6 +782,18 @@ class _AccountPageState extends State<AccountPage> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => ChangePasswordPage()),
+            );
+          },
+        ),
+        _buildMenuOption(
+          context,
+          icon: Icons.logout,
+          title: 'Logout',
+          onTap: () async {
+            await FirebaseAuth.instance.signOut();
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const LoginPage()),
+              (route) => false,
             );
           },
         ),
@@ -1285,6 +1358,103 @@ class _RegistrationDialogState extends State<RegistrationDialog>
           ),
         ),
       ),
+    );
+  }
+}
+
+class AboutUsPage extends StatelessWidget {
+  const AboutUsPage({super.key});
+
+  final List<Map<String, String>> _aboutCards = const [
+    {
+      'title': 'Complete Site Preparation',
+      'desc': 'From land survey to compound wall, we handle it all.',
+      'imagePath': 'assets/images/site_prep.png',
+    },
+    {
+      'title': 'Professional & Prompt Execution',
+      'desc': 'We value your timelines and investments.',
+      'imagePath': 'assets/images/prof_prompt.png',
+    },
+    {
+      'title': 'Approval & Compliance Support',
+      'desc': 'We take care of paperwork and approvals for you.',
+      'imagePath': 'assets/images/approval_complaince.png',
+    },
+    {
+      'title': 'Expert Team & Quality Workmanship',
+      'desc':
+          'Our team ensures your land is ready for hassle-free construction.',
+      'imagePath': 'assets/images/expert_team.png',
+    },
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(24),
+      children: [
+        const Text(
+          'Why choose us?',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF1273EB),
+          ),
+        ),
+        const SizedBox(height: 24),
+        ..._aboutCards.map(
+          (card) => Card(
+            elevation: 4,
+            margin: const EdgeInsets.only(bottom: 20),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.asset(
+                      card['imagePath']!,
+                      height: 120,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        height: 120,
+                        color: Colors.grey[200],
+                        child: const Center(
+                          child: Icon(
+                            Icons.broken_image,
+                            size: 40,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    card['title']!,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1273EB),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    card['desc']!,
+                    style: const TextStyle(fontSize: 15, color: Colors.black87),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

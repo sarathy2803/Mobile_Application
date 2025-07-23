@@ -8,24 +8,21 @@ environment:
   sdk: ^3.8.1
 
 dependencies:
-  image_picker: ^1.0.4  # Latest version
-  carousel_slider: ^5.1.1 # Or the latest version
   flutter:
     sdk: flutter
-  google_sign_in: ^6.1.6
-  firebase_core: ^2.24.2
-  firebase_auth: ^4.15.2
-
   cupertino_icons: ^1.0.8
+  image_picker: ^1.0.4  # Latest version
+  carousel_slider: ^5.1.1 # Or the latest version
+  firebase_core: ^2.30.0
+  firebase_auth: ^4.19.0
+  google_sign_in: ^6.2.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_lints: ^5.0.0
 
 flutter:
-
   uses-material-design: true
   assets:
     - assets/images/bricks.png
@@ -33,3 +30,9 @@ flutter:
     - assets/images/soil.png
     - assets/images/steel.png
     - assets/images/stones.png
+    - assets/images/google.png
+    - assets/images/site_prep.png
+    - assets/images/prof_prompt.png
+    - assets/images/approval_complaince.png
+    - assets/images/expert_team.png
+
