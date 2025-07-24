@@ -1,3 +1,6 @@
+// ===============================
+//           IMPORTS
+// ===============================
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -5,6 +8,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+// ===============================
+//           MAIN/APP ENTRY
+// ===============================
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -18,6 +24,9 @@ class Firebase {
   }
 }
 
+// ===============================
+//           MYAPP
+// ===============================
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -40,6 +49,9 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// ===============================
+//        SPLASH SCREEN
+// ===============================
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -63,7 +75,6 @@ class _SplashScreenState extends State<SplashScreen>
     _controller.forward();
 
     Future.delayed(const Duration(seconds: 2), () {
-      // ignore: use_build_context_synchronously
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const LoginPage()),
       );
@@ -95,19 +106,7 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
               ),
               SizedBox(height: 10),
-              Text(
-                'Since 2008',
-                style: TextStyle(fontSize: 16, color: Colors.black54),
-              ),
-              SizedBox(height: 5),
-              Text(
-                'Knowledge Guaranteed',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1273EB),
-                ),
-              ),
+              // You can uncomment and add more splash screen text here
             ],
           ),
         ),
@@ -116,6 +115,9 @@ class _SplashScreenState extends State<SplashScreen>
   }
 }
 
+// ===============================
+//           LOGIN PAGE
+// ===============================
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -160,11 +162,7 @@ class _LoginPageState extends State<LoginPage> {
           .signInWithCredential(credential);
       User? user = userCredential.user;
       if (user != null) {
-        print('User UID: ${user.uid}');
-        print('User Name: ${user.displayName}');
-        print('User Email: ${user.email}');
-        print('User Photo: ${user.photoURL}');
-        // You can pass user info to DashboardPage or store it as needed
+        // Use user info as needed
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const DashboardPage()),
         );
@@ -335,6 +333,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
+// ===============================
+//        DASHBOARD PAGE
+// ===============================
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
@@ -348,7 +349,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   static const List<Widget> _pages = <Widget>[
     Center(child: HomePage()),
-    Center(child: AboutUsPage()), // <-- Replace Chat Page with AboutUsPage
+    Center(child: AboutUsPage()),
     Center(child: Text('Sell Page', style: TextStyle(fontSize: 24))),
     MyAdsPage(),
     AccountPage(),
@@ -371,7 +372,6 @@ class _DashboardPageState extends State<DashboardPage> {
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
       transitionDuration: const Duration(milliseconds: 400),
       pageBuilder: (context, animation, secondaryAnimation) {
-        // This is not used because we are using transitionBuilder
         return const SizedBox.shrink();
       },
       transitionBuilder: (context, animation, secondaryAnimation, child) {
@@ -452,13 +452,11 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   void _showNotifications() {
-    // Get the render box of the icon to calculate its position
     final RenderBox renderBox =
         _notificationIconKey.currentContext!.findRenderObject() as RenderBox;
     final Size size = renderBox.size;
     final Offset offset = renderBox.localToGlobal(Offset.zero);
 
-    // Dummy notification messages
     final List<String> dummyNotifications = [
       'Your order #12345 has been shipped.',
       'You have a new message from support.',
@@ -468,7 +466,6 @@ class _DashboardPageState extends State<DashboardPage> {
 
     showMenu<String>(
       context: context,
-      // Position the menu relative to the notification icon
       position: RelativeRect.fromLTRB(
         offset.dx,
         offset.dy + size.height,
@@ -491,7 +488,6 @@ class _DashboardPageState extends State<DashboardPage> {
       }).toList(),
     ).then((selectedValue) {
       if (selectedValue == null) return;
-      // Handle tap on a notification item if needed
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Tapped on: $selectedValue')));
@@ -505,22 +501,14 @@ class _DashboardPageState extends State<DashboardPage> {
         title: Column(
           children: [
             const Text(
-              'KALSUN INFRA',
+              'KG',
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 50,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),
             const SizedBox(height: 4),
-            // Text(
-            //   'Knowledge Guaranteed',
-            //   style: TextStyle(
-            //     fontSize: 12,
-            //     // ignore: deprecated_member_use
-            //     color: Colors.white.withOpacity(0.8),
-            //   ),
-            // ),
           ],
         ),
         backgroundColor: const Color(0xFF1273EB),
@@ -544,7 +532,6 @@ class _DashboardPageState extends State<DashboardPage> {
                       borderRadius: BorderRadius.circular(24),
                       boxShadow: [
                         BoxShadow(
-                          // ignore: deprecated_member_use
                           color: Colors.black.withOpacity(0.1),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
@@ -553,7 +540,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     ),
                     child: TextField(
                       decoration: InputDecoration(
-                        hintText: 'Search...',
+                        hintText: 'Search....',
                         border: InputBorder.none,
                         prefixIcon: const Icon(
                           Icons.search,
@@ -658,6 +645,9 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 }
 
+// ===============================
+//        ACCOUNT PAGE
+// ===============================
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
 
@@ -667,6 +657,7 @@ class AccountPage extends StatefulWidget {
 
 class _AccountPageState extends State<AccountPage> {
   File? _image;
+  String userName = 'User Name'; // Default user name
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
@@ -677,6 +668,38 @@ class _AccountPageState extends State<AccountPage> {
         _image = File(image.path);
       });
     }
+  }
+
+  void _showEditNameDialog() {
+    TextEditingController nameController = TextEditingController(
+      text: userName,
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Edit User Name'),
+        content: TextField(
+          controller: nameController,
+          decoration: InputDecoration(labelText: 'New User Name'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                userName = nameController.text;
+              });
+              Navigator.of(context).pop();
+            },
+            child: Text('Save'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -712,9 +735,25 @@ class _AccountPageState extends State<AccountPage> {
               ],
             ),
             const SizedBox(height: 10),
-            const Text(
-              'User Name',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  userName,
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(width: 8),
+                GestureDetector(
+                  onTap: () {
+                    _showEditNameDialog();
+                  },
+                  child: CircleAvatar(
+                    radius: 14,
+                    backgroundColor: Theme.of(context).primaryColor,
+                    child: Icon(Icons.edit, color: Colors.white, size: 16),
+                  ),
+                ),
+              ],
             ),
             Text(
               'View and edit profile',
@@ -728,7 +767,12 @@ class _AccountPageState extends State<AccountPage> {
           context,
           icon: Icons.favorite_border,
           title: 'Wishlist',
-          onTap: () {},
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const WishlistPage()),
+            );
+          },
         ),
         _buildMenuOption(
           context,
@@ -740,7 +784,34 @@ class _AccountPageState extends State<AccountPage> {
           context,
           icon: Icons.help_outline,
           title: 'Help & Support',
-          onTap: () {},
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text('For More Information Contact'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('📞 +91 63830 88140'),
+                    SizedBox(height: 8),
+                    Text('✉️ sarudavid4422@gmail.com'),
+                    SizedBox(height: 8),
+                    Text(
+                      '🌐 www.kalsungroups.com',
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text('Close'),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
         _buildMenuOption(
           context,
@@ -754,31 +825,11 @@ class _AccountPageState extends State<AccountPage> {
           title: 'Elite Packages for Buyers',
           onTap: () {},
         ),
-        // const SizedBox(height: 40),
-        // Padding(
-        //   padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        //   child: SizedBox(
-        //     width: double.infinity,
-        //     height: 50,
-        //     child: ElevatedButton(
-        //       onPressed: _applyChanges,
-        //       style: ElevatedButton.styleFrom(
-        //         backgroundColor: Theme.of(context).primaryColor,
-        //         foregroundColor: Colors.white,
-        //         shape: RoundedRectangleBorder(
-        //           borderRadius: BorderRadius.circular(10),
-        //         ),
-        //       ),
-        //       child: const Text('Save Changes', style: TextStyle(fontSize: 12)),
-        //     ),
-        //   ),
-        // ),
         _buildMenuOption(
           context,
           icon: Icons.lock_outline,
           title: 'Change Password',
           onTap: () {
-            // Navigate to change password screen or show a dialog
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => ChangePasswordPage()),
@@ -794,6 +845,17 @@ class _AccountPageState extends State<AccountPage> {
             Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (context) => const LoginPage()),
               (route) => false,
+            );
+          },
+        ),
+        _buildMenuOption(
+          context,
+          icon: Icons.rate_review,
+          title: 'Feedback & Rating',
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (context) => FeedbackDialog(),
             );
           },
         ),
@@ -820,6 +882,9 @@ class _AccountPageState extends State<AccountPage> {
   }
 }
 
+// ===============================
+//     CHANGE PASSWORD PAGE
+// ===============================
 class ChangePasswordPage extends StatelessWidget {
   const ChangePasswordPage({super.key});
 
@@ -848,7 +913,6 @@ class ChangePasswordPage extends StatelessWidget {
             SizedBox(height: 30),
             ElevatedButton(
               onPressed: () {
-                // Implement password change logic here
                 Navigator.pop(context);
               },
               child: Text('Change Password'),
@@ -860,6 +924,9 @@ class ChangePasswordPage extends StatelessWidget {
   }
 }
 
+// ===============================
+//        MY ADS PAGE
+// ===============================
 class MyAdsPage extends StatefulWidget {
   const MyAdsPage({super.key});
 
@@ -893,11 +960,8 @@ class _MyAdsPageState extends State<MyAdsPage>
     if (image != null) {
       setState(() {
         _adImage = File(image.path);
-        _fadeController.forward(from: 0); // Start fade-in animation
+        _fadeController.forward(from: 0);
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Image selected! Path: ${image.path}')),
-      );
     }
   }
 
@@ -969,6 +1033,9 @@ class _MyAdsPageState extends State<MyAdsPage>
   }
 }
 
+// ===============================
+//       RECENT LISTING ITEM
+// ===============================
 class RecentListingItem {
   final String title;
   final String category;
@@ -983,6 +1050,9 @@ class RecentListingItem {
   });
 }
 
+// ===============================
+//           HOME PAGE
+// ===============================
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -1163,6 +1233,9 @@ class HomePage extends StatelessWidget {
   }
 }
 
+// ===============================
+//     REGISTRATION DIALOG
+// ===============================
 class RegistrationDialog extends StatefulWidget {
   const RegistrationDialog({super.key});
 
@@ -1362,6 +1435,9 @@ class _RegistrationDialogState extends State<RegistrationDialog>
   }
 }
 
+// ===============================
+//         ABOUT US PAGE
+// ===============================
 class AboutUsPage extends StatelessWidget {
   const AboutUsPage({super.key});
 
@@ -1455,6 +1531,156 @@ class AboutUsPage extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+// ===============================
+//         FEEDBACK DIALOG
+// ===============================
+class FeedbackDialog extends StatefulWidget {
+  const FeedbackDialog({super.key});
+
+  @override
+  State<FeedbackDialog> createState() => _FeedbackDialogState();
+}
+
+class _FeedbackDialogState extends State<FeedbackDialog> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _subjectController = TextEditingController();
+  final TextEditingController _feedbackController = TextEditingController();
+  double _rating = 0;
+
+  void _submitFeedback() {
+    if (_formKey.currentState!.validate() && _rating > 0) {
+      Navigator.of(context).pop();
+      // Show a popup indicating successful rating
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Success'),
+          content: const Text('Rated successfully!'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      // You can add further feedback submission logic here.
+    } else if (_rating == 0) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please provide a rating')));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Feedback & Rating'),
+      content: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: _subjectController,
+                decoration: const InputDecoration(
+                  labelText: 'Subject',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Please enter a subject'
+                    : null,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _feedbackController,
+                decoration: const InputDecoration(
+                  labelText: 'Your Words',
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 3,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Please enter your feedback'
+                    : null,
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  const Text('Rating:'),
+                  const SizedBox(width: 0),
+                  // Simple star rating bar
+                  for (int i = 1; i <= 4; i++)
+                    IconButton(
+                      icon: Icon(
+                        i <= _rating ? Icons.star : Icons.star_border,
+                        color: const Color.fromARGB(255, 34, 143, 43),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _rating = i.toDouble();
+                        });
+                      },
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(onPressed: _submitFeedback, child: const Text('Submit')),
+      ],
+    );
+  }
+}
+
+SmoothStarRating({
+  required double rating,
+  required bool isReadOnly,
+  required int size,
+  required IconData filledIconData,
+  required IconData halfFilledIconData,
+  required IconData defaultIconData,
+  required int starCount,
+  required bool allowHalfRating,
+  required Null Function(dynamic value) onRated,
+}) {}
+
+class WishlistPage extends StatelessWidget {
+  const WishlistPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Wishlist')),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            // Navigate to DashboardPage
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const DashboardPage()),
+              (route) => false,
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF1273EB),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+          ),
+          child: const Text('Discover'),
+        ),
+      ),
     );
   }
 }
