@@ -1613,7 +1613,6 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                 children: [
                   const Text('Rating:'),
                   const SizedBox(width: 0),
-                  // Simple star rating bar
                   for (int i = 1; i <= 4; i++)
                     IconButton(
                       icon: Icon(
